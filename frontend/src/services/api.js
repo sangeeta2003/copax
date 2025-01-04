@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8081/api';
+console.log('API URL:', API_BASE_URL);
 
 const api = {
   getAllStocks: () => axios.get(`${API_BASE_URL}/stocks`),
