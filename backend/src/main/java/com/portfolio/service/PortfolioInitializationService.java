@@ -1,5 +1,6 @@
 package com.portfolio.service;
 
+import com.portfolio.model.Stock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
