@@ -30,14 +30,16 @@ public class Stock {
     @Column(name = "purchase_date")
     private LocalDateTime purchaseDate;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "portfolio_id")
     @JsonIgnoreProperties({"stocks", "user", "hibernateLazyInitializer"})
     private Portfolio portfolio;
 
     @PrePersist
     protected void onCreate() {
-        purchaseDate = LocalDateTime.now();
+        if (purchaseDate == null) {
+            purchaseDate = LocalDateTime.now();
+        }
     }
 
     @Override

@@ -3,7 +3,6 @@ package com.portfolio.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -16,21 +15,12 @@ public class Portfolio {
 
     private String name;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonIgnoreProperties({"portfolios", "hibernateLazyInitializer"})
     private User user;
 
     @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
     @JsonIgnoreProperties({"portfolio", "hibernateLazyInitializer"})
-    private List<Stock> stocks = new ArrayList<>();
-
-    @Override
-    public String toString() {
-        return "Portfolio{" +
-            "id=" + id +
-            ", name='" + name + '\'' +
-            ", userId=" + (user != null ? user.getId() : "null") +
-            '}';
-    }
+    private List<Stock> stocks;
 } 

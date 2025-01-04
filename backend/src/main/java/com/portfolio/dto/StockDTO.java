@@ -10,7 +10,7 @@ public class StockDTO {
     private String ticker;
     private Integer quantity;
     private Double buyPrice;
+    private Double currentPrice;
     private Double totalValue;
-    private Long portfolioId;
     private LocalDateTime purchaseDate;
 } 

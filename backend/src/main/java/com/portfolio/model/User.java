@@ -3,7 +3,6 @@ package com.portfolio.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -20,14 +19,5 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnoreProperties({"user", "hibernateLazyInitializer"})
-    private List<Portfolio> portfolios = new ArrayList<>();
-
-    @Override
-    public String toString() {
-        return "User{" +
-            "id=" + id +
-            ", username='" + username + '\'' +
-            ", email='" + email + '\'' +
-            '}';
-    }
+    private List<Portfolio> portfolios;
 } 

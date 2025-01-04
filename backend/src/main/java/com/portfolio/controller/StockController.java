@@ -1,8 +1,10 @@
 package com.portfolio.controller;
 
+import com.portfolio.model.Portfolio;
 import com.portfolio.dto.StockDTO;
 import com.portfolio.model.Stock;
 import com.portfolio.service.StockService;
+import com.portfolio.service.PortfolioService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,42 +12,51 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
-import org.springframework.http.HttpStatus;
 import java.time.LocalDateTime;
+import org.springframework.http.HttpStatus;
 
 @RestController
-@RequestMapping("/api/stocks")
+@RequestMapping("/api")
+@CrossOrigin(origins = "*")
 public class StockController {
 
     @Autowired
     private StockService stockService;
 
-    @GetMapping
+    @Autowired
+    private PortfolioService portfolioService;
+
+    @GetMapping("/stocks")
     public List<StockDTO> getAllStocks() {
         return stockService.getAllStocks();
+    }
+
+    @PostMapping("/stocks")
+    public ResponseEntity<?> createStock(@RequestBody Stock stock, @RequestParam Long portfolioId) {
+        try {
+            Portfolio portfolio = portfolioService.getPortfolioById(portfolioId);
+            if (portfolio == null) {
+                portfolio = portfolioService.createPortfolio("Default Portfolio");
+                System.out.println("Created new portfolio with ID: " + portfolio.getId());
+            }
+            
+            stock.setPortfolio(portfolio);
+            Stock savedStock = stockService.createStock(stock);
+            return ResponseEntity.ok(savedStock);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of(
+                    "message", "Error creating stock: " + e.getMessage(),
+                    "timestamp", LocalDateTime.now()
+                ));
+        }
     }
 
     @GetMapping("/{id}")
     public StockDTO getStock(@PathVariable Long id) {
         return stockService.getStock(id);
-    }
-
-    @PostMapping
-    public ResponseEntity<?> createStock(@Valid @RequestBody Stock stock, @RequestParam Long portfolioId) {
-        try {
-            System.out.println("Received request to create stock: " + stock);
-            System.out.println("Portfolio ID: " + portfolioId);
-            
-            StockDTO createdStock = stockService.createStock(stock, portfolioId);
-            return ResponseEntity.ok(createdStock);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Map<String, Object> response = new HashMap<>();
-            response.put("message", e.getMessage());
-            response.put("timestamp", LocalDateTime.now());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
     }
 
     @PutMapping("/{id}")
